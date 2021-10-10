@@ -146,7 +146,7 @@ window.ml8.startAnimation()
 
 function refreshCanvas(selected) {
     if(hexArray.length < 8) {
-        alert("Selected: " + selected);
+        alert("You've reached the last or the 10th selection of images. Thank you.");
         return;
     }
 
