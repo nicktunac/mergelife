@@ -109,7 +109,24 @@ function refreshCanvas(selected) {
     window.ml8.init({rule: value8, canvas: canvas8, cellSize: 2, controls: false, resetCount: 1000});
     window.ml8.startAnimation();
 
+    clearInputFields();
+    changeFooterText();
 };
+
+function clearInputFields() {
+    document.getElementById('firstImage').value = "";
+    document.getElementById('secondImage').value = "";
+}
+
+function changeFooterText() {
+    var remaining = (80 - hexArray.length)/8;
+    document.getElementById('random-counter').innerText = "" + remaining + " out of 10";
+
+    if (remaining == 10) {
+        window.location.replace("");
+        location.href = 'random-survey.html';
+    }
+}
 
 const confirmButton = document.getElementById('confirm-random');
 
