@@ -64,7 +64,7 @@ window.ml8.init({rule: mutations[7], canvas: canvas8, cellSize: 2, controls: fal
 window.ml8.startAnimation()
 
 function refreshCanvas() {
-    generateMutations();
+    generateRules();
 
     window.ml1.init({rule: mutations[0], canvas: canvas1, cellSize: 2, controls: false, resetCount: 1000});
     window.ml1.startAnimation();
@@ -94,46 +94,159 @@ function refreshCanvas() {
     changeFooterText();
 };
 
-function generateMutations() {
+function generateRules() {
     var input1 = document.getElementById('firstImage').value;
     var input2 = document.getElementById('secondImage').value;
 
-    var tmpParent1 = mutations[input1 - 1];
-    var tmpParent2 = mutations[input2 - 1];
+    var parent1 = mutations[input1 - 1];
+    var parent2 = mutations[input2 - 1];
 
-    mutations[input1 - 1] = tmpParent1.substr(0, 30) + tmpParent2.split("-")[6] + "-" + tmpParent1.split("-")[7];
-    mutations[input2 - 1] = tmpParent2.substr(0, 30) + tmpParent1.split("-")[6] + "-" + tmpParent2.split("-")[7];
+    var options = [0, 1, 2, 3, 4, 5, 6, 7];
+    shuffle(options);
 
-    console.log(mutations[input1 -1]);
+    var parent1Split = parent1.split("-");
+    var parent2Split = parent2.split("-");
 
-    const remaining = [];
+    generateCrossOvers(parent1Split, parent2Split, options);
+    generateMutations(parent1, parent2);
+    console.log(mutations);
+}
+
+function generateMutations(parent1, parent2) {
+    // generate image 3
+    var numberIndex = getRandomNumberIndex(parent1);
+    var charIndex = getRandomCharIndex(parent1);
+
+    var tmpNum = parent1.split('')[numberIndex];
+    var tmpChar = parent1.split('')[charIndex];
+
+    var image = parent1.split('');
+    image[numberIndex] = tmpChar;
+    image[charIndex] = tmpNum;
+
+    mutations[2] = image.join('');
+
+    // generate image 4
+    numberIndex = getRandomNumberIndex(parent2);
+    charIndex = getRandomCharIndex(parent2);
+
+    tmpNum = parent2.split('')[numberIndex];
+    tmpChar = parent2.split('')[charIndex];
+
+    image = parent2.split('');
+    image[numberIndex] = tmpChar;
+    image[charIndex] = tmpNum;
+
+    mutations[3] = image.join('');
+
+    // generate image 6
+    numberIndex = getRandomNumberIndex(parent1);
+    charIndex = getRandomCharIndex(parent1);
+
+    tmpNum = parent1.split('')[numberIndex];
+    tmpChar = parent1.split('')[charIndex];
+
+    image = parent1.split('');
+    image[numberIndex] = tmpChar;
+    image[charIndex] = tmpNum;
+
+    mutations[6] = image.join('');
+
+    // generate image 7
+    numberIndex = getRandomNumberIndex(parent2);
+    charIndex = getRandomCharIndex(parent2);
+
+    tmpNum = parent2.split('')[numberIndex];
+    tmpChar = parent2.split('')[charIndex];
+
+    image = parent2.split('');
+    image[numberIndex] = tmpChar;
+    image[charIndex] = tmpNum;
+
+    mutations[7] = image.join('');
+
+}
+
+function getRandomNumberIndex(mergeRule) {
+    var rules = mergeRule.split('');
+
+    var randomIndex = -1;
+
+    while(true) {
+        randomIndex = Math.floor(Math.random() * rules.length);
+        if(!isNaN(rules[randomIndex])) {
+            return randomIndex;
+        }
+    }
+}
+
+function getRandomCharIndex(mergeRule) {
+    var rules = mergeRule.split('');
+
+    var randomIndex = -1;
+
+    while(true) {
+        randomIndex = Math.floor(Math.random() * rules.length);
+
+        if(rules[randomIndex] != "-" && isNaN(rules[randomIndex])) {
+            return randomIndex;
+        }
+    }
+}
+
+function generateCrossOvers(parent1Split, parent2Split, options) {
+    // generate image 1
+    var mutation = "";
     for(var i = 0; i < 8; i++) {
-        if(i != input1 - 1 && i != input2 - 1) {
-            remaining.push(i);
+        if (i == options[0]) {
+            mutation += parent2Split[i] + "-";
+        } else {
+            mutation += parent1Split[i] + "-";
         }
     }
 
-    shuffle(remaining);
+    mutations[0] = mutation.substr(0, mutation.length - 1);
 
-    var offspring1 = tmpParent1.substr(0,3) + tmpParent1.split("-")[2].substr(3) + tmpParent1.substr(4,9) + tmpParent1.split("-")[0].substr(3) + tmpParent1.substr(14);
-    var offspring2 = tmpParent2.substr(0,3) + tmpParent2.split("-")[2].substr(3) + tmpParent2.substr(4,9) + tmpParent2.split("-")[0].substr(3) + tmpParent2.substr(14);
 
-    mutations[remaining[0]] = offspring1;
-    mutations[remaining[1]] = offspring2;
+    // generate image 2
+    mutation = "";
+    // generate second crossover
+    for(var i = 0; i < 8; i++) {
+        if (i == options[0]) {
+            mutation += parent1Split[i] + "-";
+        } else {
+            mutation += parent2Split[i] + "-";
+        }
+    }
 
-    var tmpParent2 = mutations[remaining[2]];
-    var tmpParent3 = mutations[remaining[3]];
+    mutations[1] = mutation.substr(0, mutation.length - 1);
 
-    mutations[remaining[2]] = tmpParent2.substr(0, 30) + tmpParent3.split("-")[6] + "-" + tmpParent2.split("-")[7];
-    mutations[remaining[3]] = tmpParent3.substr(0, 30) + tmpParent2.split("-")[6] + "-" + tmpParent3.split("-")[7];
+    // generate image 5
+    mutation = "";
+    // generate second crossover
+    for(var i = 0; i < 8; i++) {
+        if (i == options[1]) {
+            mutation += parent2Split[i] + "-";
+        } else {
+            mutation += parent1Split[i] + "-";
+        }
+    }
 
-    var tmpParent4 = mutations[remaining[4]];
-    var tmpParent5 = mutations[remaining[5]];
+    mutations[4] = mutation.substr(0, mutation.length - 1);
 
-    mutations[remaining[4]] = tmpParent4.substr(0, 30) + tmpParent5.split("-")[6] + "-" + tmpParent4.split("-")[7];
-    mutations[remaining[5]] = tmpParent5.substr(0, 30) + tmpParent4.split("-")[6] + "-" + tmpParent5.split("-")[7];
+    // generate image 6
+    mutation = "";
+    // generate second crossover
+    for(var i = 0; i < 8; i++) {
+        if (i == options[1]) {
+            mutation += parent1Split[i] + "-";
+        } else {
+            mutation += parent2Split[i] + "-";
+        }
+    }
 
-    console.log(mutations);
+    mutations[5] = mutation.substr(0, mutation.length - 1);
+
 }
 
 function clearInputFields() {
@@ -157,13 +270,24 @@ confirmButton.addEventListener("click", function(event) {
     var input1 = document.getElementById('firstImage').value;
     var input2 = document.getElementById('secondImage').value;
 
+    if (input1 == "" || input2 == "") {
+        alert("Please enter your selections first");
+        return;
+    }
+
     if (isNaN(input1) || isNaN(input2)) {
         alert("Please enter a valid number");
         return;
     }
 
+    const selections = ["1", "2", "3" , "4" ,"5" ,"6" ,"7", "8"];
+    if (!selections.includes(input1) || !selections.includes(input2)) {
+        alert("Please choose 2 images from image 1 to 8 only.");
+        return;
+    }
+
     if (input1 == input2) {
-        alert("Image must not be the same");
+        alert("Image selections must not be the same image number.");
         return;
     }
 

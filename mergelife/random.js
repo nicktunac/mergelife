@@ -123,7 +123,6 @@ function changeFooterText() {
     document.getElementById('random-counter').innerText = "" + remaining + " out of 10";
 
     if (remaining == 10) {
-        window.location.replace("");
         location.href = 'random-survey.html';
     }
 }
@@ -134,10 +133,27 @@ confirmButton.addEventListener("click", function(event) {
     var input1 = document.getElementById('firstImage').value;
     var input2 = document.getElementById('secondImage').value;
 
+    if (input1 == "" || input2 == "") {
+        alert("Please enter your selections first");
+        return;
+    }
+
     if (isNaN(input1) || isNaN(input2)) {
         alert("Please enter a valid number");
         return;
     }
+
+    const selections = ["1", "2", "3" , "4" ,"5" ,"6" ,"7", "8"];
+    if (!selections.includes(input1) || !selections.includes(input2)) {
+        alert("Please choose 2 images from image 1 to 8 only.");
+        return;
+    }
+
+    if (input1 == input2) {
+        alert("Image selections must not be the same image number.");
+        return;
+    }
+
 
     refreshCanvas(value1);
 });
