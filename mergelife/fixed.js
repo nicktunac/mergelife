@@ -20,8 +20,9 @@ for(let i = 0; i < 8; i++) {
     mutations.push(hexValue);
 }
 
+const selected = [];
+
 shuffle(mutations);
-console.log(mutations);
 
 const canvas1 = document.getElementById('canvas-1')
 window.ml1 = new MergeLifeRender()
@@ -65,6 +66,8 @@ window.ml8.startAnimation()
 
 function refreshCanvas() {
     generateRules();
+    changeFooterText();
+    clearInputFields();
 
     window.ml1.init({rule: mutations[0], canvas: canvas1, cellSize: 2, controls: false, resetCount: 1000});
     window.ml1.startAnimation();
@@ -89,9 +92,6 @@ function refreshCanvas() {
 
     window.ml8.init({rule: mutations[7], canvas: canvas8, cellSize: 2, controls: false, resetCount: 1000});
     window.ml8.startAnimation();
-
-    clearInputFields();
-    changeFooterText();
 };
 
 function generateRules() {
@@ -101,11 +101,18 @@ function generateRules() {
     var parent1 = mutations[input1 - 1];
     var parent2 = mutations[input2 - 1];
 
-    var options = [0, 1, 2, 3, 4, 5, 6, 7];
+    var options = [0, 1, 2, 3, 5, 6, 7];
     shuffle(options);
 
     var parent1Split = parent1.split("-");
     var parent2Split = parent2.split("-");
+
+    mutations[0] = parent1;
+    mutations[4] = parent2;
+
+    selected.push(parent1);
+    selected.push(parent2);
+    console.log(selected);
 
     generateCrossOvers(parent1Split, parent2Split, options);
     generateMutations(parent1, parent2);
@@ -126,32 +133,6 @@ function generateMutations(parent1, parent2) {
 
     mutations[2] = image.join('');
 
-    // generate image 4
-    numberIndex = getRandomNumberIndex(parent2);
-    charIndex = getRandomCharIndex(parent2);
-
-    tmpNum = parent2.split('')[numberIndex];
-    tmpChar = parent2.split('')[charIndex];
-
-    image = parent2.split('');
-    image[numberIndex] = tmpChar;
-    image[charIndex] = tmpNum;
-
-    mutations[3] = image.join('');
-
-    // generate image 6
-    numberIndex = getRandomNumberIndex(parent1);
-    charIndex = getRandomCharIndex(parent1);
-
-    tmpNum = parent1.split('')[numberIndex];
-    tmpChar = parent1.split('')[charIndex];
-
-    image = parent1.split('');
-    image[numberIndex] = tmpChar;
-    image[charIndex] = tmpNum;
-
-    mutations[6] = image.join('');
-
     // generate image 7
     numberIndex = getRandomNumberIndex(parent2);
     charIndex = getRandomCharIndex(parent2);
@@ -163,8 +144,7 @@ function generateMutations(parent1, parent2) {
     image[numberIndex] = tmpChar;
     image[charIndex] = tmpNum;
 
-    mutations[7] = image.join('');
-
+    mutations[6] = image.join('');
 }
 
 function getRandomNumberIndex(mergeRule) {
@@ -195,7 +175,7 @@ function getRandomCharIndex(mergeRule) {
 }
 
 function generateCrossOvers(parent1Split, parent2Split, options) {
-    // generate image 1
+    // generate image 2
     var mutation = "";
     for(var i = 0; i < 8; i++) {
         if (i == options[0]) {
@@ -203,12 +183,12 @@ function generateCrossOvers(parent1Split, parent2Split, options) {
         } else {
             mutation += parent1Split[i] + "-";
         }
+        
     }
 
-    mutations[0] = mutation.substr(0, mutation.length - 1);
+    mutations[1] = mutation.substr(0, mutation.length - 1);
 
-
-    // generate image 2
+    // generate image 6
     mutation = "";
     // generate second crossover
     for(var i = 0; i < 8; i++) {
@@ -219,33 +199,33 @@ function generateCrossOvers(parent1Split, parent2Split, options) {
         }
     }
 
-    mutations[1] = mutation.substr(0, mutation.length - 1);
-
-    // generate image 5
-    mutation = "";
-    // generate second crossover
-    for(var i = 0; i < 8; i++) {
-        if (i == options[1]) {
-            mutation += parent2Split[i] + "-";
-        } else {
-            mutation += parent1Split[i] + "-";
-        }
-    }
-
-    mutations[4] = mutation.substr(0, mutation.length - 1);
-
-    // generate image 6
-    mutation = "";
-    // generate second crossover
-    for(var i = 0; i < 8; i++) {
-        if (i == options[1]) {
-            mutation += parent1Split[i] + "-";
-        } else {
-            mutation += parent2Split[i] + "-";
-        }
-    }
-
     mutations[5] = mutation.substr(0, mutation.length - 1);
+
+    // generate image 4
+    mutation = "";
+    // generate second crossover
+    for(var i = 0; i < 8; i++) {
+        if (i == options[1]) {
+            mutation += parent2Split[i] + "-";
+        } else {
+            mutation += parent1Split[i] + "-";
+        }
+    }
+
+    mutations[3] = mutation.substr(0, mutation.length - 1);
+
+    // generate image 8
+    mutation = "";
+    // generate second crossover
+    for(var i = 0; i < 8; i++) {
+        if (i == options[1]) {
+            mutation += parent1Split[i] + "-";
+        } else {
+            mutation += parent2Split[i] + "-";
+        }
+    }
+
+    mutations[7] = mutation.substr(0, mutation.length - 1);
 
 }
 
@@ -258,8 +238,15 @@ function changeFooterText() {
     count++;
     document.getElementById('random-counter').innerText = "" + count + " out of 10";
 
-    if (count == 10) {
-        window.location.replace("");
+    if (count > 10) {
+        var rules = "Selected Rules: \n\n";
+
+        for(var i = 1; i <= selected.length; i++) {
+            rules += "" + i + ". " + selected[i - 1] + "\n";
+        }
+        alert(rules);
+        console.log(rules);
+        //window.location.replace("");
         location.href = 'fixed-survey.html';
     }
 }

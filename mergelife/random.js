@@ -21,6 +21,8 @@ for(let i = 0; i < 80; i++) {
 
 shuffle(hexArray);
 
+count = 1;
+
 var value1 = hexArray.pop();
 var value2 = hexArray.pop();
 var value3 = hexArray.pop();
@@ -71,10 +73,8 @@ window.ml8.init({rule: value8, canvas: canvas8, cellSize: 2, controls: false, re
 window.ml8.startAnimation()
 
 function refreshCanvas(selected) {
-    if(hexArray.length < 8) {
-        alert("Go to survey");
-        return;
-    }
+    clearInputFields();
+    changeFooterText();
 
     value1 = hexArray.pop();
     value2 = hexArray.pop();
@@ -109,8 +109,7 @@ function refreshCanvas(selected) {
     window.ml8.init({rule: value8, canvas: canvas8, cellSize: 2, controls: false, resetCount: 1000});
     window.ml8.startAnimation();
 
-    clearInputFields();
-    changeFooterText();
+
 };
 
 function clearInputFields() {
@@ -119,11 +118,12 @@ function clearInputFields() {
 }
 
 function changeFooterText() {
-    var remaining = (80 - hexArray.length)/8;
-    document.getElementById('random-counter').innerText = "" + remaining + " out of 10";
+    count++;
 
-    if (remaining == 10) {
+    if (count > 10) {
         location.href = 'random-survey.html';
+    } else {
+        document.getElementById('random-counter').innerText = "" + count + " out of 10";
     }
 }
 
